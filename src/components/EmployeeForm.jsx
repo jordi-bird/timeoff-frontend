@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 function EmployeeForm({ onEmployeeCreated }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,14 +19,17 @@ function EmployeeForm({ onEmployeeCreated }) {
       onEmployeeCreated(newEmployee);
       setName('');
       setEmail('');
+      setError('');
     } else {
-      alert('Error creating employee');
+      const errorData = await res.json();
+      setError(errorData.errors?.join(', ') || 'Error creating employee');
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
       <h3 className="text-2xl font-semibold mb-4">Create New Employee</h3>
+      {error && <div className="text-red-600 text-sm">{error}</div>}
       <div className="mb-4">
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
         <input
